@@ -1,0 +1,15 @@
+-0.1293, 4.9844
+0.1905, 4.9527
+0.4411, 5.1333
+0.8984, 5.2353
+2.0512, 5.3132
+3.959, 5.3357
+6.967, 5.3418
+
+
+
+Time in days, biomass of Prochlorococcus strain UH18301. (gotten from data thief on a log scale though.......need to raise to power of 10 when graphing.)
+
+
+from Morris et al 2011 Figure 1, panel D, Blue Line
+Graph showing Prochlorococcus biomass after inoculation and as HOOH concentrations increase. EZ55 detoxifies in this experiment so no seen effect on Pro growth from the non-Hepes data (green line...data not shown in text file.) 

@@ -1,0 +1,16 @@
+-0.0347, -1.502
+0.2759, -0.737
+0.6133, -0.9599
+1.1197, -1.2818
+2.1836, -1.2014
+7.2013, -1.2925
+
+
+
+Time in days, amount of HOOH in solution on a log scale so raise to power of 10 for graphing.
+
+
+from Morris et al 2011 Figure 1, panel C, blue line
+Graph showing HOOH concentration over time when Hepes buffer is in solution with DOC and light and EZ55 is in the solution 
+
+idk if Pro is in solution 

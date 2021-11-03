@@ -1,0 +1,10 @@
+1.3773e-3, -1.2634
+1.1365, 0.1832
+2.2317, 0.3458
+7.0624, 0.6995
+
+Time in days, amount of HOOH in solution on a log scale so raise to power of 10 for graphing.   HOOH concentrations in micromolar
+
+
+from Morris et al 2011 Figure 1, panel C, black Line
+graph showing HOOH concentration over time. NO Pro or ez55 in solution.  
