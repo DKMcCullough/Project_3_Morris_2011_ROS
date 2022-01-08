@@ -91,7 +91,7 @@ Hsd = np.std(Hs)     #getting numpy to find the stdv of the data (but really wil
 #initial values and creating time array
 
 delta = 0.6
-S_HOOH = 2.8
+S_HOOH = 2.5
 step = 0.05 #delta t
 ndays = 7
 times = np.linspace(0,ndays,int(ndays/step))
@@ -104,7 +104,7 @@ Hs = f(times,S_HOOH,delta)
 #print(times,Hs) 
 
 
-#plt.plot(times,Hs,c='g',marker='*',label='Analytical Solution')
+plt.plot(times,Hs,c='g',marker='*',label='Analytical Solution')
 
 
 
@@ -126,7 +126,7 @@ for t in times:
 	dHdt = S_HOOH - delta*H
 	H = H + dHdt*step
 	
-#plt.plot(times,HsEuler,c='k',label = "Euler's Aproximation")
+plt.plot(times,HsEuler,c='k',label = "Euler's Aproximation")
 
 plt.legend()
 
@@ -152,7 +152,7 @@ def HsODEint(H,t):
 ode_solutions = odeint(HsODEint,0,times)
 
 
-#plt.plot(times,ode_solutions,c='purple', linestyle = ':', label = 'Odeint Approximation')
+plt.plot(times,ode_solutions,c='purple', linestyle = ':', label = 'Odeint Approximation')
 
 plt.legend()
 

@@ -80,7 +80,7 @@ Ts = HOOH_times
 Hsd = np.std(Hs)     #getting numpy to find the stdv of the data (but really will probs be 0.1 bc the data set doesn't have triplicates in it. 
 
 
-'''
+
 
 ####################################
 
@@ -90,7 +90,7 @@ Hsd = np.std(Hs)     #getting numpy to find the stdv of the data (but really wil
 
 #initial values and creating time array
 
-delta = 0.5
+delta = 5
 S_HOOH = 2.5
 step = 0.3 #delta t
 ndays = 7
@@ -106,7 +106,6 @@ Hs = f(times,S_HOOH,delta)
 
 plt.plot(times,Hs,c='g',marker='*',label='Analytical Solution')
 
-'''
 
 
 
@@ -123,7 +122,7 @@ t0 = 0
 
 #initial values and creating time array
 
-delta = 0.5
+delta = 5
 S_HOOH = 2.5
 step = 0.3 #delta t
 ndays = 7
