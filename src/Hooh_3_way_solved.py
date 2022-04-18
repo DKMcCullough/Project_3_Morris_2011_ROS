@@ -38,7 +38,7 @@ HOOH_df = pd.read_csv('../data/hooh_blank.txt', delimiter =',', header= None, na
 ###############################
 
 HOOH_data = 10**np.array(HOOH_df.iloc[:,1])   #raised to 10 because ot the way data thief recorded the data and its scale
-
+#HOOHs_nm = 1000**np.array(HOOH_data)   #TRIED TO GET IN nM to match better with other things 
 #print(HOOH_data)
 
 
@@ -66,15 +66,15 @@ HOOH_times =np.array(HOOH_df.iloc[:,0])
 ##############################
 
 
-plt.scatter(HOOH_times, HOOH_data, marker = 'x', s=50, c = 'r', label = 'Measured HOOH') 
-plt.xlabel('Time (day $^{-1}$)', fontsize=16) 
+plt.scatter(HOOH_times, HOOH_data, marker = 's', s=50, c = 'r', label = 'Measured HOOH') 
+plt.xlabel('Time (days)', fontsize=16) 
 plt.ylabel('HOOH concentration (\u03BCM)',fontsize=16)
 plt.yscale('log')
 plt.tick_params(labelsize=12)
 #plt.show()
 
 
-Hs = HOOH_data
+Hs = (HOOH_data)
 Ts = HOOH_times
 
 Hsd = np.std(Hs)     #getting numpy to find the stdv of the data (but really will probs be 0.1 bc the data set doesn't have triplicates in it. 
@@ -90,8 +90,8 @@ Hsd = np.std(Hs)     #getting numpy to find the stdv of the data (but really wil
 
 #initial values and creating time array
 
-delta = 0.6
-S_HOOH = 2.5
+delta = 0.5
+S_HOOH = 2.3
 step = 0.05 #delta t
 ndays = 7
 times = np.linspace(0,ndays,int(ndays/step))
@@ -104,10 +104,7 @@ Hs = f(times,S_HOOH,delta)
 #print(times,Hs) 
 
 
-plt.plot(times,Hs,c='g',marker='*',label='Analytical Solution')
-
-
-
+#plt.plot(times,Hs,c='g',marker='*',label='Analytical Solution')
 
 
 
@@ -126,7 +123,7 @@ for t in times:
 	dHdt = S_HOOH - delta*H
 	H = H + dHdt*step
 	
-plt.plot(times,HsEuler,c='k',label = "Euler's Aproximation")
+plt.plot(times,HsEuler,c='red',label = 'Model')#,label = "Euler's Aproximation")
 
 plt.legend()
 
@@ -152,7 +149,9 @@ def HsODEint(H,t):
 ode_solutions = odeint(HsODEint,0,times)
 
 
-plt.plot(times,ode_solutions,c='purple', linestyle = ':', label = 'Odeint Approximation')
+#plt.plot(times,ode_solutions,c='purple', linestyle = ':', label = 'Odeint Approximation')
+plt.xticks(fontsize = 14)
+plt.yticks(fontsize = 14)
 
 plt.legend()
 
