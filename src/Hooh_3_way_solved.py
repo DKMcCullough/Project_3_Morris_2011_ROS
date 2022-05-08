@@ -69,6 +69,7 @@ HOOH_times =np.array(HOOH_df.iloc[:,0])
 plt.scatter(HOOH_times, HOOH_data, marker = 's', s=50, c = 'r', label = 'Measured HOOH') 
 plt.xlabel('Time (days)', fontsize=16) 
 plt.ylabel('HOOH concentration (\u03BCM)',fontsize=16)
+
 plt.yscale('log')
 plt.tick_params(labelsize=12)
 #plt.show()
@@ -123,7 +124,7 @@ for t in times:
 	dHdt = S_HOOH - delta*H
 	H = H + dHdt*step
 	
-plt.plot(times,HsEuler,c='red',label = 'Model')#,label = "Euler's Aproximation")
+#plt.plot(times,HsEuler,c='red',label = 'Model')#,label = "Euler's Aproximation")
 
 plt.legend()
 
@@ -153,8 +154,8 @@ ode_solutions = odeint(HsODEint,0,times)
 plt.xticks(fontsize = 14)
 plt.yticks(fontsize = 14)
 
-plt.legend()
 
+plt.legend(loc = 'lower right')
 plt.show()
 
 	

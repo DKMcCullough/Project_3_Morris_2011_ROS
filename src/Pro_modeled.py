@@ -15,10 +15,10 @@ goal: model  Pro data from HOOH and no HOOH trials
 
 import pandas as pd
 import numpy as np
-from matplotlib import *
+#from matplotlib import *
 import matplotlib.pyplot as plt
-from scipy.integrate import *
 from scipy import *
+from scipy.integrate import odeint
 from pylab import *
 
 
@@ -51,16 +51,9 @@ pro_detoxed['biomass'] = 10**pro_detoxed['biomass']
 
 plt.figure()           #graphed all treatments in same rep column each time.
 
-#plt.scatter(x = pro_hooh['times'], y = pro_hooh['biomass'], label = 'HOOH trial')
+plt.scatter(x = pro_hooh['times'], y = pro_hooh['biomass'],marker = 's', s = 50, c = 'b', label = 'HOOH trial')
 
-#plt.scatter(x = pro_detoxed['times'], y = pro_detoxed['biomass'], label = 'HOOH detoxed (EZ55)')
-
-plt.scatter(x = pro_hooh['times'], y = pro_hooh['biomass'], marker = 'D',  s = 50,label = 'HOOH trial')
-plt.plot(pro_hooh['times'],pro_hooh['biomass'], color = 'k', linestyle='solid', linewidth=0.25)
-
-plt.scatter(x = pro_detoxed['times'], y = pro_detoxed['biomass'], marker = 's', s = 50, label = 'HOOH detoxed (EZ55)')
-plt.plot(pro_detoxed['times'], pro_detoxed['biomass'], linestyle='solid', linewidth=0.25)
-
+plt.scatter(x = pro_detoxed['times'], y = pro_detoxed['biomass'], marker = 's', s = 50,color = 'orange', label = 'HOOH detoxed')
 
 plt.semilogy()
 
@@ -80,36 +73,53 @@ plt.yticks(fontsize = 14)
 
 #######################################
 
-#   Model detoxed 
+#   Model detoxed   (via EZ55)
 
 #######################################
+#initial values 
 
-P = 1e5
-N = 1e5
-k2 = mumax = 0.5
-k1 = alpha = 0.09
-step = 0.1 #delta 
+#P0 = pro_detoxed['biomass'][0]  #P0 set to initial data point 
+P0 = pro_detoxed['biomass'][1]  #P0 set to second data point b/c of dip in abundance btwn t0 and t30
+N0 = 1.22e5
+inits = (P0,N0)
+
+#parameters
+k2 =  0.88    #mumax    #this is high.........0.7 is kind upper limit shown in literature? 
+k1 =  0.00002     #alpha
+d= 0.0000000000001
+params = [k1,k2,d]
+
+#time window 
+step = 0.01 #delta 
 ndays = 7
 mtimes = np.linspace(0,ndays,int(ndays/step))
-Ps = np.array([]) 
-Ns = np.array([])
+
+#empty P and N arrays 
+P = np.array([])
+N = np.array([])
+y = [P,N]
 
 
-for t in mtimes:
-    Ps = np.append(Ps,P)
-    Ns = np.append(Ns,N)
-    dPdt = k2 * P * N /( (k2/k1) + N) 
+
+#function set up for ode int
+
+
+def Pdetox(y,t,params):
+    k1,k2,d = params[0], params[1], params[2]
+    P,N = y[0],y[1]
+    dPdt = k2 * P * N /( (k2/k1) + N) -d*P
     dNdt =-P*( k2*N)/((k2/k1)+N)
-    if N+dNdt*step <0:                    #making sure S isnt taken negative and therefore causing issues when we log transform the data
-        N = 0.00000000000000000004
-    else:
-        N = N + dNdt*step 
-    P = P + dPdt*step
+    return [dPdt,dNdt]
 
-plt.plot(mtimes,  Ps, marker = '_', color = 'k',  label = 'Model')
+#solve ODEs via odeint
+detox = odeint(Pdetox, inits, mtimes,args = (params,))
 
-plt.legend()
+#redefine where P and N are in returned matrix from ode int
+Ps = detox[:,0]
+Ns = detox[:,1]
 
+#plot P
+plt.plot(mtimes, Ps, linewidth = 3, color = 'orange', label = 'd Model')
 
 
 #######################################
@@ -117,50 +127,37 @@ plt.legend()
 #   Model NOT detoxed
 
 #######################################
-P = 1e5
-N = 1e5
-k2 = mumax = 0.88
-k1 = alpha = 0.2
-step = 0.1 #delta 
-ndays = 7
-mtimes = np.linspace(0,ndays,int(ndays/step))
-Ps = np.array([]) 
-Ns = np.array([])
+P0 = pro_hooh['biomass'][0]
+inits = (P0,N0)
 
-#HOOH_df = pd.read_csv('../data/hooh_blank.txt', delimiter =',', header= None, names =( 'Time (1/days)','HOOH concentration'))
-#HOOH = 10**np.array(HOOH_df.iloc[:,1]
-HOOH = 2e6
-kdam = (HOOH)*0.089
+HOOH = 3.75e6    #Hepes buffer of 3.75 micromolar put in   #HOOH in nanomolar? 
+kdam = (HOOH)*0.051
+params = [k1,k2,kdam]
 
 
-for t in mtimes:
-    Ps = np.append(Ps,P)
-    Ns = np.append(Ns,N)
+#function set up for ode int
+
+
+def Ptrial(y,t,params):
+    k1,k2,kdam = params[0], params[1], params[2]
+    P,N = y[0],y[1]
     dPdt = k2 * P * N /( (k2/k1) + N) - kdam+P
     dNdt =-P*( k2*N)/((k2/k1)+N)
-    if N+dNdt*step <0:                    #making sure S isnt taken negative and therefore causing issues when we log transform the data
-        N = 0.00000000000000000004
-    else:
-        N = N + dNdt*step 
-    P = P + dPdt*step
-
-plt.plot(mtimes,  Ps, marker = '_', color = 'k'  )#label = 'Pro modeled')
-
-plt.legend(loc = 'right middle')
+    return [dPdt,dNdt]
 
 
+#solve ODEs via odeint
+trial = odeint(Ptrial, inits, mtimes,args = (params,))
 
+#redefine where P and N are in returned matrix from ode int
+Ps = trial[:,0]
+Ns = trial[:,1]
 
+plt.plot(mtimes, Ps, linewidth = 3, color = 'b', label = 'kdam model')
+
+plt.legend(loc = 'center right')
 
 plt.show()
 
-
-
-
 print("Done")
-
-
-
-
-
 
