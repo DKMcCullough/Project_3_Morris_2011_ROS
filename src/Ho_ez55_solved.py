@@ -67,11 +67,11 @@ HOOH_times =np.array(HOOH_df.iloc[:,0])
 ##############################
 
 
-plt.scatter(HOOH_times, HOOH_data, marker = 'x', c = 'r', label = 'Measured HOOH') 
-plt.xlabel('Time (day $^{-1}$)') 
+plt.scatter(HOOH_times, HOOH_data, marker = 's', c = 'r', label = 'Measured HOOH') 
+plt.xlabel('Time (days') 
 plt.ylabel('HOOH concentration')
 
-plt.show()
+#plt.show()
 
 
 Hs = HOOH_data
@@ -90,9 +90,9 @@ Hsd = np.std(Hs)     #getting numpy to find the stdv of the data (but really wil
 
 #initial values and creating time array
 
-delta = 5
+delta = 11
 S_HOOH = 2.5
-step = 0.3 #delta t
+step = 0.1 #delta t
 ndays = 7
 times = np.linspace(0,ndays,int(ndays/step))
 
@@ -104,7 +104,7 @@ Hs = f(times,S_HOOH,delta)
 #print(times,Hs) 
 
 
-plt.plot(times,Hs,c='g',marker='*',label='Analytical Solution')
+plt.plot(times,Hs,c='g', linestyle = '-.',label='Analytical Solution')
 
 
 
@@ -122,7 +122,7 @@ t0 = 0
 
 #initial values and creating time array
 
-delta = 5
+#delta = 5
 S_HOOH = 2.5
 step = 0.3 #delta t
 ndays = 7
@@ -133,7 +133,7 @@ for t in times:
 	dHdt = S_HOOH - delta*H
 	H = H + dHdt*step
 	
-plt.plot(times,HsEuler,c='b',label = "Euler's Aproximation")
+#plt.plot(times,HsEuler,c='b',label = "Euler's Aproximation")
 
 plt.legend()
 

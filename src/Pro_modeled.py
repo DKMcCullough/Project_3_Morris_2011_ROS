@@ -119,7 +119,7 @@ Ps = detox[:,0]
 Ns = detox[:,1]
 
 #plot P
-plt.plot(mtimes, Ps, linewidth = 3, color = 'orange', label = 'd Model')
+plt.plot(mtimes, Ps, linestyle = ':', linewidth = 3, color = 'orange', label = 'd Model')
 
 
 #######################################
@@ -153,10 +153,10 @@ trial = odeint(Ptrial, inits, mtimes,args = (params,))
 Ps = trial[:,0]
 Ns = trial[:,1]
 
-plt.plot(mtimes, Ps, linewidth = 3, color = 'b', label = 'kdam model')
+plt.plot(mtimes, Ps, linestyle = ':', linewidth = 3, color = 'b', label = 'kdam model')
 
-plt.legend(loc = 'center right')
-
+#plt.legend(loc = 'center right')
+plt.semilogy()
 plt.show()
 
 print("Done")

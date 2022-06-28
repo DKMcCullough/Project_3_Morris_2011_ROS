@@ -105,8 +105,8 @@ Hs = f(times,S_HOOH,delta)
 #print(times,Hs) 
 
 
-#plt.plot(times,Hs,c='g',marker='*',label='Analytical Solution')
-
+plt.plot(times,Hs,c='g',linestyle = '-.',label='Analytical Solution')
+#, marker='*'
 
 
 #############################
@@ -150,7 +150,7 @@ def HsODEint(H,t):
 ode_solutions = odeint(HsODEint,0,times)
 
 
-#plt.plot(times,ode_solutions,c='purple', linestyle = ':', label = 'Odeint Approximation')
+plt.plot(times,ode_solutions,c='purple', linestyle = ':', label = 'Odeint Approximation')
 plt.xticks(fontsize = 14)
 plt.yticks(fontsize = 14)
 
