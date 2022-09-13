@@ -130,6 +130,11 @@ plt.plot(mtimes, Ps, linestyle = ':', linewidth = 3, color = 'orange', label = '
 P0 = pro_hooh['biomass'][0]
 inits = (P0,N0)
 
+
+#Hepes = 3.75 mM 
+HEPES = 3750 
+
+
 HOOH = 3.75e6    #Hepes buffer of 3.75 micromolar put in   #HOOH in nanomolar? 
 kdam = (HOOH)*0.051
 params = [k1,k2,kdam]
@@ -142,7 +147,7 @@ def Ptrial(y,t,params):
     k1,k2,kdam = params[0], params[1], params[2]
     P,N = y[0],y[1]
     dPdt = k2 * P * N /( (k2/k1) + N) - kdam+P
-    dNdt =-P*( k2*N)/((k2/k1)+N)
+    dNdt = -P*( k2*N)/((k2/k1)+N)
     return [dPdt,dNdt]
 
 
