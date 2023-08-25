@@ -108,7 +108,7 @@ def Pdetox(y,t,params):
     k1,k2,d = params[0], params[1], params[2]
     P,N = y[0],y[1]
     dPdt = k2 * P * N /( (k2/k1) + N) -d*P
-    dNdt =-P*( k2*N)/((k2/k1)+N)
+    dNdt =-P*( k2*N)/((k2/k1)+N)   #add in N source 
     return [dPdt,dNdt]
 
 #solve ODEs via odeint
@@ -146,7 +146,7 @@ params = [k1,k2,kdam]
 def Ptrial(y,t,params):
     k1,k2,kdam = params[0], params[1], params[2]
     P,N = y[0],y[1]
-    dPdt = k2 * P * N /( (k2/k1) + N) - kdam+P
+    dPdt = k2 * P * N /( (k2/k1) + N) - kdam+P #need to have delta from previous model iteration here as well
     dNdt = -P*( k2*N)/((k2/k1)+N)
     return [dPdt,dNdt]
 
