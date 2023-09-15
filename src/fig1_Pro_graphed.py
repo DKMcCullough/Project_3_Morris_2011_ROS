@@ -29,7 +29,7 @@ from scipy.integrate import *
 
 
 
-df_all = pd.read_csv("../data/avgs.csv")
+df_all = pd.read_csv("../data/multi_H_Pros.csv")
 df_all['avg_exp'] = df_all['avg_exp'].fillna(value = 0.0) #filling Nans with 0.0 in 'avg' column 
 df_all = df_all.rename({'Time(days)':'times'}, axis=1)    #'renaming column to make it callable by 'times'
 

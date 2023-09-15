@@ -26,8 +26,10 @@ import matplotlib.pyplot as plt
 ###############################
 
  
-HOOH_df = pd.read_csv('../data/hooh_blank.txt', delimiter =',', header= None, names =( 'Time (1/days)','HOOH concentration'))
+df_all = pd.read_csv('../data/Buffers_Morris_2011_f1.csv')
 
+df_all.drop(df_all.columns[df_all.columns.str.contains('unnamed',case = False)],axis = 1, inplace = True)
+df_all = df_all.rename({'Time (days)':'time'}, axis=1)    #'renaming column to make it callable by 'times'
 
 
 
@@ -37,13 +39,18 @@ HOOH_df = pd.read_csv('../data/hooh_blank.txt', delimiter =',', header= None, na
 
 ###############################
 
-HOOH_data = 10**np.array(HOOH_df.iloc[:,1])   #raised to 10 because ot the way data thief recorded the data and its scale
+
+
+df_all['treatment'].unique()
+
+
+#HOOH_data = 10**np.array(df_all.iloc[:,1])   #raised to 10 because ot the way data thief recorded the data and its scale
 #HOOHs_nm = 1000**np.array(HOOH_data)   #TRIED TO GET IN nM to match better with other things 
 #print(HOOH_data)
 
 
 
-
+'''
 
 ##############################
 
@@ -160,7 +167,7 @@ plt.show()
 
 	
 
-
+'''
 
 
 	

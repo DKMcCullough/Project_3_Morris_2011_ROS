@@ -30,26 +30,55 @@ from scipy.integrate import odeint
 #SynWH8102 (Vol 54) is KatG negative 
 
 
-#data import
+#data importmulti_H_Pros.csv"
 
-df_all = pd.read_csv("../data/avgs.csv")
-#df_all = pd.read_csv("/Users/dkm/Documents/Talmy_research/Zinser_lab/Projects/ROS_focused/Project_6_cocultures/data/avgs.csv")
-df_all['avg_exp'] = df_all['avg_exp'].fillna(value = 0.0) #filling Nans with 0.0 in 'avg' column 
-df_all = df_all.rename({'Time(days)':'times'}, axis=1)    #'renaming column to make it callable by 'times'
-'''
+df_all = pd.read_csv("../data/multi_H_Pros.csv")
+df_all.drop(df_all.columns[df_all.columns.str.contains('unnamed',case = False)],axis = 1, inplace = True)
+df_all.dropna()
+#df_all['avg_exp'] = df_all['avg_exp'].fillna(value = 0.0) #filling Nans with 0.0 in 'avg' column 
+df_all = df_all.rename({'Time (days)':'times'}, axis=1)    #'renaming column to make it callable by 'times'
+
+#making log of data to look at error
+df_all['log1'] = np.log(df_all['rep1'])
+df_all['log2'] = np.log(df_all['rep2'])
+df_all['log3'] = np.log(df_all['rep3'])
+
+df_all['abundance'] =  np.nanmean(np.r_[[df_all[i] for i in ['rep1','rep2','rep3']]],axis=0)
+df_all['log_abundance'] = np.nanmean(np.r_[[df_all[i] for i in ['log1','log2','log3']]],axis=0)
+df_all['log_sigma'] = np.std(np.r_[[df_all[i] for i in ['log1','log2','log3']]],axis=0)
+
 ####################################
 
 # Slicing Data
 
 ####################################
 
+strains = df_all['Strain'].unique()
+for s in strains: 
+    df = df_all[(df_all['Strain'] == s)]
+    treats  = df['Treatment(HOOH (uM))'].unique()
+    for t in treats: 
+        fig1, (ax1)= plt.subplots(2,1 ,figsize = (6,7))
+        fig1.suptitle('Prochlorococcus Monoculture Dynamics'+ str(s)+ 'in' +str(t))
+        ax1[0].set_ylabel('Pro cells (per ml)')
+        fig1.supxlabel('Time (days)')
+        ax1[0].plot(df['times'],(df.loc[df['organism'] == 'P', 'abundance']), marker='o' , label =str(s) ) 
+        ax1[1].plot(df['times'], (df.loc[df['organism'] == 'H', 'abundance']), marker = 'o',label=str(t) + ' with Pro ')#,color = colors[ai])#, label=h_lab) #,yerr = df['HOOH_stdv']
+        l1 = ax1[0].legend(loc = 'best')
+        l1.draw_frame(False)#print(df)
+        plt.show()
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
-df_4 = df_all[df_all['treatment']==400].copy()
-df_4.info()
 
-
-
-
+'''
 
 fig2, (ax1)= plt.subplots( figsize = (6,7))
 fig2.suptitle('Prochlorococcus Monoculture Dynamics')
@@ -57,7 +86,7 @@ ax1.set_ylabel('Pro cells (per ml)')
 
 ax1.set_xlabel('Time (days)')
 
-ax1.plot(df_4['times'],df_4['avg_exp'], marker='o' ) #,yerr = df['biomass_stdv'],
+ax1.plot(df['times'],df['abundance'], marker='o' ) 
 #ax2.plot(df['times'], df['HOOH_avg'], marker = 'o',label=str(t) + ' with Pro ')#,color = colors[ai])#, label=h_lab) #,yerr = df['HOOH_stdv']
 #print(df)
 
@@ -141,7 +170,7 @@ plt.show()
 
 
 print('*** Done ***')
-'''
+
 
 treatments = [50,200,400,800,10000]  #HOOH nM []   #1000 or 10000 nM HOOH for last treatment....kdam no longer saturation if later case
 treatments_smol = treatments[1:3]
@@ -189,11 +218,11 @@ plt.yticks(fontsize = 14)
 
 #############################
 
-'''
+
 #dPdt = (max growth rate)(nutient concentration)/michelis-mention constant) + (nutrinet concentration) (Population size) 
 #dSdt = (Supply of nutriet) - (max growth rate)(nutient concentration)/michelis-mention constant) + (nutrinet concentration)
 #Qn = (9.4e-15*(1/14.0)*1e+9)  #Nitrogen Quota for Pro 
-'''
+
 step = 0.01
 ndays = 2.1
 times = np.linspace(0,ndays,int(ndays/step))
@@ -281,4 +310,8 @@ for x, y, c, m, in zip(treatments,kdams, colors, markers):
 #ax3.semilogy()
 ax3.legend(loc = 'lower right')
 plt.show()
+
+
+'''
+
 print('*** Done ***')
