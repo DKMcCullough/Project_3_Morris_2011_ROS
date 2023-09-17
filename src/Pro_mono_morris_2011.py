@@ -34,7 +34,7 @@ from scipy.integrate import odeint
 
 df_all = pd.read_csv("../data/multi_H_Pros.csv")
 df_all.drop(df_all.columns[df_all.columns.str.contains('unnamed',case = False)],axis = 1, inplace = True)
-df_all.dropna()
+#df_all.dropna()
 #df_all['avg_exp'] = df_all['avg_exp'].fillna(value = 0.0) #filling Nans with 0.0 in 'avg' column 
 df_all = df_all.rename({'Time (days)':'times'}, axis=1)    #'renaming column to make it callable by 'times'
 
@@ -54,28 +54,39 @@ df_all['log_sigma'] = np.std(np.r_[[df_all[i] for i in ['log1','log2','log3']]],
 ####################################
 
 strains = df_all['Strain'].unique()
-for s in strains: 
+nstrains = strains.shape[0]
+
+colors = ('green', 'blue','c', 'orange', 'r', 'k') 
+markers = ('s','v','o','*','d','v')
+
+for s,ns in zip(strains,range(nstrains)): 
     df = df_all[(df_all['Strain'] == s)]
+    print(df)
     treats  = df['Treatment(HOOH (uM))'].unique()
-    for t in treats: 
-        fig1, (ax1)= plt.subplots(2,1 ,figsize = (6,7))
-        fig1.suptitle('Prochlorococcus Monoculture Dynamics'+ str(s)+ 'in' +str(t))
-        ax1[0].set_ylabel('Pro cells (per ml)')
-        fig1.supxlabel('Time (days)')
-        ax1[0].plot(df['times'],(df.loc[df['organism'] == 'P', 'abundance']), marker='o' , label =str(s) ) 
-        ax1[1].plot(df['times'], (df.loc[df['organism'] == 'H', 'abundance']), marker = 'o',label=str(t) + ' with Pro ')#,color = colors[ai])#, label=h_lab) #,yerr = df['HOOH_stdv']
-        l1 = ax1[0].legend(loc = 'best')
-        l1.draw_frame(False)#print(df)
-        plt.show()
+    ntreats = treats.shape[0]
+    print(treats,ntreats)
+    fig1, (ax1)= plt.subplots( figsize = (12,7))
+
+    for t,nt in zip(treats,range(ntreats)): 
+        count = nt
+        df = df[(df['Treatment(HOOH (uM))'] == t)]
+        print(df)
+        times = df['times']
+        pdata = (df['abundance'])
+        ax1.plot(times, pdata, marker= markers[count], markersize= 10, label =str(t), color = colors[count] ) 
+    fig1.suptitle('Prochlorococcus Monoculture Dynamics'+ str(s))
+    ax1.set_ylabel('Pro cells (per ml)')
+    fig1.supxlabel('Time (days)')
+    l1 = ax1.legend(loc = 'lower right', prop={"size":12}) 
+    l1.draw_frame(False)#print(df)
+    ax1.semilogy()
+    plt.xticks(fontsize = 14)
+    plt.yticks(fontsize = 14)
+    plt.show()
     
-    
-    
-    
-    
-    
-    
-    
-    
+    #plt.show()
+
+#        hdata = (df.loc[df['organism'] == 'H', 'abundance'])
 
 
 '''
