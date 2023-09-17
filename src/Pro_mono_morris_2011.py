@@ -60,53 +60,29 @@ colors = ('green', 'blue','c', 'orange', 'r', 'k')
 markers = ('s','v','o','*','d','v')
 
 for s,ns in zip(strains,range(nstrains)): 
-    df = df_all[(df_all['Strain'] == s)]
-    print(df)
-    treats  = df['Treatment(HOOH (uM))'].unique()
+    df_s = df_all[(df_all['Strain'] == s)]
+    treats  = df_s['Treatment(HOOH (uM))'].unique()
     ntreats = treats.shape[0]
-    print(treats,ntreats)
-    fig1, (ax1)= plt.subplots( figsize = (12,7))
-
+    fig1,(ax1)= plt.subplots( figsize = (10,6))
     for t,nt in zip(treats,range(ntreats)): 
         count = nt
-        df = df[(df['Treatment(HOOH (uM))'] == t)]
-        print(df)
-        times = df['times']
+        df = df_s[(df_s['Treatment(HOOH (uM))'] == t)]
+        times = (df['times'])
         pdata = (df['abundance'])
-        ax1.plot(times, pdata, marker= markers[count], markersize= 10, label =str(t), color = colors[count] ) 
-    fig1.suptitle('Prochlorococcus Monoculture Dynamics'+ str(s))
+        ax1.plot(times, pdata, marker= markers[count], markersize= 10, label =(str(t)+' nM HOOH'), color = colors[count] ) 
+    fig1.suptitle('Prochlorococcus Monoculture Dynamics '+ str(s))
     ax1.set_ylabel('Pro cells (per ml)')
     fig1.supxlabel('Time (days)')
-    l1 = ax1.legend(loc = 'lower right', prop={"size":12}) 
+    l1 = ax1.legend(loc = 'center right', prop={"size":13}) 
     l1.draw_frame(False)#print(df)
     ax1.semilogy()
     plt.xticks(fontsize = 14)
     plt.yticks(fontsize = 14)
     plt.show()
     
-    #plt.show()
-
-#        hdata = (df.loc[df['organism'] == 'H', 'abundance'])
 
 
 '''
-
-fig2, (ax1)= plt.subplots( figsize = (6,7))
-fig2.suptitle('Prochlorococcus Monoculture Dynamics')
-ax1.set_ylabel('Pro cells (per ml)')
-
-ax1.set_xlabel('Time (days)')
-
-ax1.plot(df['times'],df['abundance'], marker='o' ) 
-#ax2.plot(df['times'], df['HOOH_avg'], marker = 'o',label=str(t) + ' with Pro ')#,color = colors[ai])#, label=h_lab) #,yerr = df['HOOH_stdv']
-#print(df)
-
-
-plt.legend()
-#plt.show()
-
-
-
 
 
 
