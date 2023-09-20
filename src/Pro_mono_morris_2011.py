@@ -9,11 +9,8 @@ location: /Users/dkm/Documents/Talmy_research/Zinser_lab/Projects/ROS_focused/Pr
 
 author: DKM
 
+to do: Get model working for the treatments of both species
 
-goal: import and all treatments of NH4 addition experients using MIT9215 and RCC299 from 2-5
-
-
-working on: get phis for cat Neg or Pos Syn down 
 """
 
 #Pro UH18301
@@ -34,7 +31,7 @@ from scipy.integrate import odeint
 
 df_all = pd.read_csv("../data/multi_H_Pros.csv")
 df_all.drop(df_all.columns[df_all.columns.str.contains('unnamed',case = False)],axis = 1, inplace = True)
-#df_all.dropna()
+df_all.dropna()
 #df_all['avg_exp'] = df_all['avg_exp'].fillna(value = 0.0) #filling Nans with 0.0 in 'avg' column 
 df_all = df_all.rename({'Time (days)':'times'}, axis=1)    #'renaming column to make it callable by 'times'
 
@@ -54,6 +51,7 @@ df_all['log_sigma'] = np.std(np.r_[[df_all[i] for i in ['log1','log2','log3']]],
 ####################################
 
 strains = df_all['Strain'].unique()
+
 nstrains = strains.shape[0]
 
 colors = ('green', 'blue','c', 'orange', 'r', 'k') 
@@ -79,9 +77,15 @@ for s,ns in zip(strains,range(nstrains)):
     plt.xticks(fontsize = 14)
     plt.yticks(fontsize = 14)
     plt.show()
+    fig1.savefig('../figures/Pro_'+str(s)+'_data.png')
     
-
-
+    #inits = pd.read_csv(("../data/inits/"+s+"_inits.csv")) 
+    
+    
+    
+    
+inits = pd.read_csv(("../data/inits/hepes"+s+".csv")) 
+#inits = pd.read_csv(("../data/inits/hepes"+s+".csv")) 
 '''
 
 
