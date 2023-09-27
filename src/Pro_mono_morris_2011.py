@@ -29,7 +29,7 @@ from scipy.integrate import odeint
 
 #data importmulti_H_Pros.csv"
 
-df_all = pd.read_csv("../data/multi_H_Pros.csv")
+df_all = pd.read_csv("../data/multi_H_Pros_morris_2011f3.csv")
 df_all.drop(df_all.columns[df_all.columns.str.contains('unnamed',case = False)],axis = 1, inplace = True)
 df_all.dropna()
 #df_all['avg_exp'] = df_all['avg_exp'].fillna(value = 0.0) #filling Nans with 0.0 in 'avg' column 
@@ -51,7 +51,7 @@ df_all['log_sigma'] = np.std(np.r_[[df_all[i] for i in ['log1','log2','log3']]],
 ####################################
 
 strains = df_all['Strain'].unique()
-
+strains = strains[~pd.isna(strains)]
 nstrains = strains.shape[0]
 
 colors = ('green', 'blue','c', 'orange', 'r', 'k') 
@@ -83,8 +83,7 @@ for s,ns in zip(strains,range(nstrains)):
     
     
     
-    
-inits = pd.read_csv(("../data/inits/hepes"+s+".csv")) 
+    inits = pd.read_csv(("../data/inits/"+str(s)+"_inits.csv")) 
 #inits = pd.read_csv(("../data/inits/hepes"+s+".csv")) 
 '''
 
@@ -305,4 +304,6 @@ plt.show()
 
 '''
 
-print('*** Done ***')
+print('\n ~~~****~~~****~~~ \n')
+print('  Done with Pros  ')
+print('\n ~~~****~~~****~~~ \n')

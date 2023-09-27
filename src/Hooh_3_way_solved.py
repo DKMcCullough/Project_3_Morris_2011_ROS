@@ -25,7 +25,9 @@ import matplotlib.pyplot as plt
 
 ###############################
 
- 
+ #UH18301 Pro in 3.75 mM HEPES or Taps buffer. High light (24uC in a Sunbox -  noon maximum of about 250 quanta m) 
+
+
 df_all = pd.read_csv('../data/Buffers_Morris_2011_f1.csv')
 
 df_all.drop(df_all.columns[df_all.columns.str.contains('unnamed',case = False)],axis = 1, inplace = True)
@@ -168,7 +170,6 @@ plt.show()
 	
 
 '''
-
-
-	
-	
+print('\n ~~~****~~~****~~~ \n')
+print('done with singular hepes')
+print('\n ~~~****~~~****~~~ \n')
