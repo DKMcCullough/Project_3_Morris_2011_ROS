@@ -1,9 +1,9 @@
 '''
-Hooh_3_way_solved.py
+viz_buffers_P_and_H_data.py
 
-Trying to match HOOH production data from Morris et al 2011 using an analytical solution, euler's aproximation, and ODEint 
+Trying to match HOOH production data from Morris et al 2011 fig 1 using an analytical solution, euler's aproximation, and ODEint 
 
-Using Morris_et_al_2011 data about HOOH production from Hepes buffer to get a 'productuion rate of HOOH vi Hepes buffer'  
+UH18301 Pro in 3.75 mM HEPES or Taps buffer. High light (24uC in a Sunbox -  noon maximum of about 250 quanta m) pro99 media 
 
 created by DKM
 
@@ -71,6 +71,7 @@ markers = ('o','*')
 
 for a,n in zip(assays,range(nassays)):
     fig1,(ax1)= plt.subplots(2,1, figsize = (12,8))
+    fig2,(ax2) = plt.subplots(1,2,figsize = (12,8))
     for t,nt in zip(treats,range(ntreats)): 
         df = df_all[(df_all['ID'] == a)]
         count = nt
@@ -87,102 +88,38 @@ for a,n in zip(assays,range(nassays)):
         l1.draw_frame(False)#print(df)
         ax1[0].semilogy()
         ax1[1].semilogy()
-        plt.xticks(fontsize = 14)
-        plt.yticks(fontsize = 14)
-
+        #viz uncertainty in data
+        ax2[0].errorbar(x = pdf['time'], y =pdf['log_abundance'],yerr = pdf['log_sigma'], color = colors[count], label = ('P in '+ str(t)))
+        ax2[0].errorbar(x = hdf['time'], y =hdf['log_abundance'],yerr = hdf['log_sigma'], color = colors[count], label = ('H of '+ str(t)))
+        ax2[1].plot(pdf['log_abundance'],pdf['log_sigma'], label = 'P')
+        ax2[1].plot(hdf['log_abundance'],hdf['log_sigma'], label = 'H')
+        fig2.suptitle('Mean and std of dynamics of '+ str(a))
+        #suptitle('mean vs std')
+        l2 = ax2[0].legend(loc = 'lower right', prop={"size":14}) 
+        l2.draw_frame(False)#print(df)
+        ax2[0].semilogy()
+        ax2[0].set_ylabel('Concentration (ml-1)'+ str(a) +' in '+ str(t))
+        ax2[0].set_xlabel('Time (Days)')
+        ax2[1].set_xlabel('mean')
+        ax2[1].set_ylabel('std')
+    plt.xticks(fontsize = 14)
+    plt.yticks(fontsize = 14)
     plt.show()
     fig1.savefig('../figures/Hproduction_'+str(a)+'_data.png')
+    fig2.savefig('../figures/dynamics_'+str(a)+'_data.png')
+
+
+
+
+
+
+
 
 
 
     
 '''
 
-
-Hs = (HOOH_data)
-Ts = HOOH_times
-
-Hsd = np.std(Hs)     #getting numpy to find the stdv of the data (but really will probs be 0.1 bc the data set doesn't have triplicates in it. 
-
-
-
-
-####################################
-
-#analytical solution
-
-####################################
-
-#initial values and creating time array
-
-delta = 0.5
-S_HOOH = 2.3
-step = 0.05 #delta t
-ndays = 7
-times = np.linspace(0,ndays,int(ndays/step))
-
-def f(t, S_HOOH, delta):
-	H = (S_HOOH/delta)*(1-e**(-delta*t))
-	return H
-
-Hs = f(times,S_HOOH,delta)
-#print(times,Hs) 
-
-
-plt.plot(times,Hs,c='g',linestyle = '-.',label='Analytical Solution')
-#, marker='*'
-
-
-#############################
-
-#Euler's Integration
-
-############################
-
-HsEuler = np.array([]) 
-H = 0.0
-t0 = 0
-
-for t in times: 
-	HsEuler = np.append(HsEuler,H)
-	dHdt = S_HOOH - delta*H
-	H = H + dHdt*step
-	
-#plt.plot(times,HsEuler,c='red',label = 'Model')#,label = "Euler's Aproximation")
-
-plt.legend()
-
-#plt.show()
-
-
-
-####################################
-
-#ODE int
-
-####################################
-
-
-from scipy.integrate import odeint
-
-def HsODEint(H,t):
-	dHdt = S_HOOH-delta*H
-	#print(dHdt,t,H)
-	return dHdt
-
-
-ode_solutions = odeint(HsODEint,0,times)
-
-
-plt.plot(times,ode_solutions,c='purple', linestyle = ':', label = 'Odeint Approximation')
-plt.xticks(fontsize = 14)
-plt.yticks(fontsize = 14)
-
-
-plt.legend(loc = 'lower right')
-plt.show()
-
-	
 
 '''
 print('\n ~~~****~~~****~~~ \n')
