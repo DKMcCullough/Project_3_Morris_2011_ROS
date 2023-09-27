@@ -33,6 +33,14 @@ df_all = pd.read_csv('../data/Buffers_Morris_2011_f1.csv')
 df_all.drop(df_all.columns[df_all.columns.str.contains('unnamed',case = False)],axis = 1, inplace = True)
 df_all = df_all.rename({'Time (days)':'time'}, axis=1)    #'renaming column to make it callable by 'times'
 
+#creating log and stats for data 
+df_all['log1'] = np.log(df_all['rep1'])
+df_all['log2'] = np.log(df_all['rep2'])
+df_all['log3'] = np.log(df_all['rep3'])
+
+df_all['abundance'] =  np.nanmean(np.r_[[df_all[i] for i in ['rep1','rep2','rep3']]],axis=0)
+df_all['log_abundance'] = np.nanmean(np.r_[[df_all[i] for i in ['log1','log2','log3']]],axis=0)
+df_all['log_sigma'] = np.std(np.r_[[df_all[i] for i in ['log1','log2','log3']]],axis=0)
 
 
 ##############################
@@ -42,39 +50,53 @@ df_all = df_all.rename({'Time (days)':'time'}, axis=1)    #'renaming column to m
 ###############################
 
 
+orgs = df_all['organism'].unique()
 
-df_all['treatment'].unique()
+assays = df_all['ID'].unique()
+nassays = assays.shape[0]
 
 
-#HOOH_data = 10**np.array(df_all.iloc[:,1])   #raised to 10 because ot the way data thief recorded the data and its scale
 #HOOHs_nm = 1000**np.array(HOOH_data)   #TRIED TO GET IN nM to match better with other things 
 #print(HOOH_data)
-
-
-
-'''
-
-##############################
-
-#   time arrays
-
-##############################
-
-
-HOOH_times =np.array(HOOH_df.iloc[:,0])
-#print(HOOH_times)
-
-
-
-
+colors = ('r','g')
+markers = ('o','*')
 
 ##############################
 
 #    graphing the data 
 
 ##############################
+for a,n in zip(assays,range(nassays)):
+    df = df_all[(df_all['ID'] == a)]
+    treats  = df['Treatment'].unique()
+    ntreats = treats.shape[0]
+    fig1,(ax1)= plt.subplots(2,1, figsize = (12,8))
+    for t,nt in zip(treats,range(ntreats)): 
+        count = nt
+        print(t)
+        df = df[(df['ID']==a) & (df['Treatment']==t)]
+        pdf = df[df['organism'] == 'P']
+        hdf = df[df['organism'] == 'H']
+        print(pdf)
+        ax1[0].plot(pdf['time'], pdf['abundance'], marker= markers[count], markersize= 10, label =(str(t)+' produced HOOH'), color = colors[count] ) 
+        ax1[1].plot(hdf['time'], hdf['abundance'], marker= markers[count], markersize= 10, label =(str(t)+' produced HOOH'), color = colors[count] ) 
+    fig1.suptitle('Abiotic Dynamics '+ str(a))
+    ax1[0].set_ylabel('HOOH concentration (\u03BCM)')
+    ax1[1].set_ylabel('Pro abundance (cell/ml)')
+    fig1.supxlabel('Time (days)')
+    l1 = ax1[0].legend(loc = 'center right', prop={"size":13}) 
+    l1.draw_frame(False)#print(df)
+    ax1[0].semilogy()
+    ax1[1].semilogy()
+    plt.xticks(fontsize = 14)
+    plt.yticks(fontsize = 14)
+    plt.show()
+    fig1.savefig('../figures/Hproduction_'+str(a)+'_data.png')
 
 
+
+    
+'''
 plt.scatter(HOOH_times, HOOH_data, marker = 's', s=50, c = 'r', label = 'Measured HOOH') 
 plt.xlabel('Time (days)', fontsize=16) 
 plt.ylabel('HOOH concentration (\u03BCM)',fontsize=16)
@@ -82,6 +104,9 @@ plt.ylabel('HOOH concentration (\u03BCM)',fontsize=16)
 plt.yscale('log')
 plt.tick_params(labelsize=12)
 #plt.show()
+
+
+
 
 
 Hs = (HOOH_data)
