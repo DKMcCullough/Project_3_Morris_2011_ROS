@@ -110,9 +110,11 @@ for a,n in zip(assays,range(nassays)):
 
 
 
+for a in ax1.flat:
+    a.set_aspect(2)
 
-
-
+for a in ax2.flat:
+    a.set_aspect(2)
 
 
 
