@@ -46,13 +46,13 @@ df = df_all
 lats = df['Latitude'].unique()
 deps = df['Depth'].unique()
 
-
+df.plot(kind="scatter", x='Depth', y='Latitude', alpha=0.1)
 ##############################
 
 #    graphing the data 
 
 ##############################
-
+'''
 
 fig1,(ax1)= plt.subplots(ntreats,2, figsize = (11,8))
 fig1.suptitle('Raw H dynamics in the Ocean', size = 22)
@@ -111,7 +111,7 @@ fig1.savefig('../figures/ocean_H_insitu_dynamics.png')
 fig2.savefig('../figures/ocean_H_insitu_stats.png')
 
 
-
+'''
 print('\n ~~~****~~~****~~~ \n')
 print('done with singular hepes')
 print('\n ~~~****~~~****~~~ \n')

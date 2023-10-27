@@ -1,5 +1,5 @@
 '''
-viz_buffers_P_and_H_data.py
+viz_buffers_PandH_morris2011.py
 
 Trying to match HOOH production data from Morris et al 2011 fig 1 using an analytical solution, euler's aproximation, and ODEint 
 
@@ -111,11 +111,6 @@ for a,n in zip(assays,range(nassays)):
 
 
 
-for a in ax1.flat:
-    a.set_aspect(2)
-
-for a in ax2.flat:
-    a.set_aspect(2)
 
 
 

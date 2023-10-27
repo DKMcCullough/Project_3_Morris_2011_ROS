@@ -31,7 +31,7 @@ from scipy.integrate import odeint
 
 df_all = pd.read_csv("../data/multi_H_Pros_morris_2011f3.csv")
 df_all.drop(df_all.columns[df_all.columns.str.contains('unnamed',case = False)],axis = 1, inplace = True)
-df_all.dropna()
+df_all.fillna(0)
 #df_all['avg_exp'] = df_all['avg_exp'].fillna(value = 0.0) #filling Nans with 0.0 in 'avg' column 
 df_all = df_all.rename({'Time (days)':'times'}, axis=1)    #'renaming column to make it callable by 'times'
 
@@ -40,7 +40,9 @@ df_all['log1'] = np.log(df_all['rep1'])
 df_all['log2'] = np.log(df_all['rep2'])
 df_all['log3'] = np.log(df_all['rep3'])
 
+#getting raw and loggex stats for error viz
 df_all['abundance'] =  np.nanmean(np.r_[[df_all[i] for i in ['rep1','rep2','rep3']]],axis=0)
+df_all['sigma'] = np.std(np.r_[[df_all[i] for i in ['rep1','rep2','rep3']]],axis=0)
 df_all['log_abundance'] = np.nanmean(np.r_[[df_all[i] for i in ['log1','log2','log3']]],axis=0)
 df_all['log_sigma'] = np.std(np.r_[[df_all[i] for i in ['log1','log2','log3']]],axis=0)
 
@@ -54,6 +56,7 @@ strains = df_all['Strain'].unique()
 strains = strains[~pd.isna(strains)]
 nstrains = strains.shape[0]
 
+#lists for plotting with multiple treats
 colors = ('green', 'blue','c', 'orange', 'r', 'k') 
 markers = ('s','v','o','*','d','v')
 
@@ -62,34 +65,85 @@ for s,ns in zip(strains,range(nstrains)):
     treats  = df_s['Treatment(HOOH (uM))'].unique()
     ntreats = treats.shape[0]
     fig1,(ax1)= plt.subplots( figsize = (10,6))
+    fig1.suptitle('Prochlorococcus Monoculture Dynamics '+ str(s))
+    ax1.set_ylabel('Pro cells (ml$^{-1}$)')
+    fig1.supxlabel('Time (days)')
+    
+    fig2,(ax2) = plt.subplots(ntreats,2,figsize=[15,12]) #plot creation and config 
+    fig2.suptitle('Raw '+ str(s)+' Data Stats' ) #full title config
+    ax2[0,0].set_title('Cell Concentration')
+    ax2[0,1].set_title('Mean vs stdv')
+    ax2[0,0].semilogy()
+    fig2.subplots_adjust(left=0.15, bottom=0.10, right=0.75, top=0.9, wspace=0.30, hspace=0.30) #shift white space for better fig view
+    
+    fig3,(ax3) = plt.subplots(ntreats,2,figsize=[15,12])
+    fig3.suptitle('Logged '+ str(s)+' Data Stats')
+    ax3[0,0].set_title('Logged Cell Concentration')
+    ax3[0,1].set_title('Logged Mean vs stdv')
+
+    fig3.subplots_adjust(left=0.15, bottom=0.10, right=0.75, top=0.9, wspace=0.30, hspace=0.30) 
     for t,nt in zip(treats,range(ntreats)): 
         count = nt
         df = df_s[(df_s['Treatment(HOOH (uM))'] == t)]
-        times = (df['times'])
-        pdata = (df['abundance'])
-        ax1.plot(times, pdata, marker= markers[count], markersize= 10, label =(str(t)+' nM HOOH'), color = colors[count] ) 
-    fig1.suptitle('Prochlorococcus Monoculture Dynamics '+ str(s))
-    ax1.set_ylabel('Pro cells (per ml)')
-    fig1.supxlabel('Time (days)')
+        #single graph of all treatments
+        ax1.plot(df['times'], df['abundance'], marker= markers[count], markersize= 10, label =(str(t)+' HOOH (uM)'), color = colors[count] ) 
+        #rae and logged stats for dynamics of each treatment
+        ax2[nt,0].errorbar(df.times,df.abundance, yerr=df.sigma, marker= markers[count], c='k',label =  'Raw Avg for ' + str(s) ) 
+        ax2[nt,0].plot(df.times,df.rep1,  marker= markers[count], c='r',label =  'rep 1 ' ) 
+        ax2[nt,0].plot(df.times,df.rep2, marker= markers[count], c='b',label =  'rep 2 ' )
+        ax2[nt,0].plot(df.times,df.rep3, marker= markers[count], c='g',label =  'rep 3 ' )
+        
+        ax2[nt,0].semilogy()
+
+        ax2[nt,1].scatter(df.abundance,df.sigma,marker= markers[count], c=colors[count])
+        ax2[nt,1].text(1.25,0.5,(str(t)+' \u03BCM HOOH '),horizontalalignment='center', verticalalignment='center', transform=ax2[nt,1].transAxes)
+        ax3[nt,0].errorbar(df.times,df.log_abundance, yerr=df.log_sigma, marker= markers[count], c='k',label =  'Log Avg for ' + str(s) ) 
+        ax3[nt,0].plot(df.times,df.log1, marker= markers[count], c='r',label =  'Log 1 ' ) 
+        ax3[nt,0].plot(df.times,df.log2,  marker= markers[count], c='b',label =  'Log 2 ' )
+        ax3[nt,0].plot(df.times,df.log3, marker= markers[count], c='g',label =  'Log 3 ' )
+        ax3[nt,1].text(1.25,0.5,( str(t)+' \u03BCM HOOH'),horizontalalignment='center', verticalalignment='center', transform=ax3[nt,1].transAxes)
+
+        ax3[nt,1].scatter(df.abundance,df.log_sigma, marker= markers[count], c=colors[count])
+    #annotate large graphs with x and y labels 
+    ax2[-1,0].set_xlabel('Time (days)')
+    ax2[-1,1].set_xlabel('Mean')
+    ax3[-1,0].set_xlabel('Time (days)')
+    ax3[-1,1].set_xlabel('Log Mean')
+    for a in ax2[:,0]:
+        a.set_ylabel('Cells (ml$^{-1}$)')
+    for a in ax2[:,1]:
+        a.set_ylabel('Raw STDV')
+    for a in ax3[:,0]:
+        a.set_ylabel('Cells (ml$^{-1}$)')
+    for a in ax3[:,1]:
+        a.set_ylabel('Log STDV')
+#set legends for each fig
     l1 = ax1.legend(loc = 'center right', prop={"size":13}) 
     l1.draw_frame(False)#print(df)
     ax1.semilogy()
+    l2 = ax2[-1,0].legend(loc = 'best',prop={"size":11})
+    l2.draw_frame(False)
+    l3 = ax3[-1,0].legend(loc = 'best',prop={"size":11})
+    l3.draw_frame(False)
+    #config ticks
     plt.xticks(fontsize = 14)
     plt.yticks(fontsize = 14)
+    #show all plots
     plt.show()
+    #save all plots
     fig1.savefig('../figures/Pro_'+str(s)+'_data.png')
+    fig2.savefig('../figures/Pro_'+str(s)+'_RawStats.png')
+    fig3.savefig('../figures/Pro_'+str(s)+'_LogStats.png')
     
     #inits = pd.read_csv(("../data/inits/"+s+"_inits.csv")) 
     
     
     
-    inits = pd.read_csv(("../data/inits/"+str(s)+"_inits.csv")) 
+    #inits = pd.read_csv(("../data/inits/"+str(s)+"_inits.csv")) 
 #inits = pd.read_csv(("../data/inits/hepes"+s+".csv")) 
+
+
 '''
-
-
-
-
 #
 ##################################################3
 # parameter and variable Set UP 
