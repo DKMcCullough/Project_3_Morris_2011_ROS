@@ -1,8 +1,6 @@
 '''
 viz_ocean_H_insitu.py
 
-visualise different buffer proiductions of H from Morris 2013 (miliQ_bufferH_2013MorrisSIfig1b) 
-  HOOH production in 10 mM Buffers plus seawater media incubated  in lightexposed milli-Q water (i.e., without seawater solutes). rep1-3 are bio1 rep4-6 are bio2
 
 created by DKM
 
@@ -14,7 +12,7 @@ from scipy.integrate import *
 import pandas as pd
 import numpy as np      
 import matplotlib.pyplot as plt   
-from Basemap import * #asemap not working yet 
+#from Basemap import * #asemap not working yet 
 
 
 
@@ -46,7 +44,11 @@ df = df_all
 lats = df['Latitude'].unique()
 deps = df['Depth'].unique()
 
-df.plot(kind="scatter", x='Depth', y='Latitude', alpha=0.1)
+df.plot(kind="scatter", x = 'Depth', y='HOOH', alpha = 1, title = 'in situ HOOH')
+
+df.plot(kind="scatter", x='Latitude', y='Depth', alpha=(abs((df.HOOH)/np.max(df.HOOH))))
+#df.plot(kind="scatter", x = (abs((df.HOOH)/np.max(df.HOOH))), y='Depth', alpha = 1)
+
 ##############################
 
 #    graphing the data 

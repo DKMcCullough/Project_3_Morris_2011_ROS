@@ -79,7 +79,7 @@ for a,n in zip(assays,range(nassays)):
         hdf = df[df['organism'] == 'H']
         ax1[0].plot(pdf['time'], pdf['abundance'], marker= markers[count], markersize= 10, label =(str(t)+' produced HOOH'), color = colors[count] ) 
         ax1[1].plot(hdf['time'], hdf['abundance'], marker= markers[count], markersize= 10, label =(str(t)+' produced HOOH'), color = colors[count] ) 
-        fig1.suptitle('Abiotic Dynamics '+ str(a))
+        fig1.suptitle('Dynamics of '+ str(a))
         ax1[1].set_ylabel('HOOH concentration (\u03BCM)')
         ax1[0].set_ylabel('Pro abundance (cell/ml)')
         fig1.supxlabel('Time (days)')
@@ -95,16 +95,21 @@ for a,n in zip(assays,range(nassays)):
 
 
 
-    
-'''
+
+df = df_all[(df_all['ID'] =='UH18301') & (df_all['Treatment']=='TAPS') & (df_all['organism'] == 'H')]
+
+Hepes = df['log_abundance']
+hepes_std = df['log_sigma']
+Ts = df['time']
 
 
-Hs = (HOOH_data)
-Ts = HOOH_times
+fig2,(ax2) = plt.subplots(figsize = (6,5))
+fig2.suptitle('HOOH production from TAPS buffer', size = 17)
+ax2.set_ylabel('HOOH concentration (\u03BCM)', size = 14)
 
-Hsd = np.std(Hs)     #getting numpy to find the stdv of the data (but really will probs be 0.1 bc the data set doesn't have triplicates in it. 
+ax2.set_xlabel('Time (days)', size = 14)
 
-
+ax2.errorbar(x = Ts,y = Hepes,yerr= hepes_std, c='r', marker = 'o', linestyle = ':',label='TAPS data')
 
 
 ####################################
@@ -116,20 +121,21 @@ Hsd = np.std(Hs)     #getting numpy to find the stdv of the data (but really wil
 #initial values and creating time array
 
 delta = 0.5
-S_HOOH = 2.3
+S_HOOH = 2.5
 step = 0.05 #delta t
 ndays = 7
+H0 = 3.5
 times = np.linspace(0,ndays,int(ndays/step))
 
 def f(t, S_HOOH, delta):
-	H = (S_HOOH/delta)*(1-e**(-delta*t))
-	return H
+    H = (S_HOOH/delta)*(1-(np.exp(-delta*t))) + (H0*(np.exp(-delta*t)))
+    return H
 
 Hs = f(times,S_HOOH,delta)
 #print(times,Hs) 
 
 
-plt.plot(times,Hs,c='g',linestyle = '-.',label='Analytical Solution')
+ax2.plot(times,Hs,c='b',linestyle = '-',label='Model via Analytical Solution')
 #, marker='*'
 
 
@@ -140,7 +146,7 @@ plt.plot(times,Hs,c='g',linestyle = '-.',label='Analytical Solution')
 ############################
 
 HsEuler = np.array([]) 
-H = 0.0
+H = 3.5
 t0 = 0
 
 for t in times: 
@@ -148,12 +154,7 @@ for t in times:
 	dHdt = S_HOOH - delta*H
 	H = H + dHdt*step
 	
-#plt.plot(times,HsEuler,c='red',label = 'Model')#,label = "Euler's Aproximation")
-
-plt.legend()
-
-#plt.show()
-
+ax2.plot(times,HsEuler,c='c',linestyle = '--',label = "Model via Euler's Aproximation")#,label = "Euler's Aproximation")
 
 
 ####################################
@@ -171,10 +172,10 @@ def HsODEint(H,t):
 	return dHdt
 
 
-ode_solutions = odeint(HsODEint,0,times)
+ode_solutions = odeint(HsODEint,3.5,times)
 
 
-plt.plot(times,ode_solutions,c='purple', linestyle = ':', label = 'Odeint Approximation')
+plt.plot(times,ode_solutions,c='g', linestyle = ':', label = 'Model via Odeint Approximation')
 plt.xticks(fontsize = 14)
 plt.yticks(fontsize = 14)
 
@@ -183,8 +184,8 @@ plt.legend(loc = 'lower right')
 plt.show()
 
 	
+fig2.savefig('../figures/Pro_'+(str(t))+'corr_graphs')
 
-'''
 print('\n ~~~****~~~****~~~ \n')
 print('done with singular hepes')
 print('\n ~~~****~~~****~~~ \n')
